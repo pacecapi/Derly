@@ -4,7 +4,14 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>Derly | Tu Espacio de Bienestar</title>
+  <meta name="description" content="Derly - Coach de Vida y Bienestar. Te acompaño en el camino hacia una vida plena, con propósito y alineada con quien realmente eres."/>
+  <meta property="og:title" content="Derly | Tu Espacio de Bienestar"/>
+  <meta property="og:description" content="Coach de Vida y Bienestar. Descubre tu mejor versión."/>
+  <meta property="og:type" content="website"/>
+  <meta name="theme-color" content="#D4A59A"/>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
   <script>
     tailwind.config = {
@@ -26,23 +33,31 @@
       }
     }
   </script>
-  <style data-purpose="typography">
+  <style>
+    html { scroll-behavior: smooth; }
     h1, h2, h3, .serif-font { font-family: 'Playfair Display', serif; }
     body { font-family: 'Inter', sans-serif; color: #3D3D3D; }
     .uppercase-tracking { text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.75rem; }
-  </style>
-  <style data-purpose="layout-tweaks">
-    .hero-overlay {
-      background: rgba(253, 250, 245, 0.85);
+
+    .hero-overlay { background: rgba(253, 250, 245, 0.88); }
+    .img-hover-zoom { overflow: hidden; }
+    .img-hover-zoom img { transition: transform 0.5s ease; }
+    .img-hover-zoom:hover img { transform: scale(1.05); }
+
+    /* Focus visible for accessibility */
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid #D4A59A;
+      outline-offset: 2px;
     }
-    .img-hover-zoom {
+
+    /* Mobile menu animation */
+    #mobile-menu {
+      max-height: 0;
       overflow: hidden;
+      transition: max-height 0.3s ease-out;
     }
-    .img-hover-zoom img {
-      transition: transform 0.5s ease;
-    }
-    .img-hover-zoom:hover img {
-      transform: scale(1.05);
+    #mobile-menu.open {
+      max-height: 400px;
     }
   </style>
 </head>
@@ -51,88 +66,101 @@
   <!-- BEGIN: Navigation -->
   <nav class="sticky top-0 z-50 bg-sand-light/90 backdrop-blur-sm border-b border-sand-medium">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-20">
+      <div class="flex justify-between items-center h-16 sm:h-20">
         <!-- Desktop Menu Left -->
-        <div class="hidden md:flex space-x-8 uppercase-tracking font-medium">
-          <a class="hover:text-sand-dark transition-colors" href="#servicios">Servicios</a>
-          <a class="hover:text-sand-dark transition-colors" href="#herramientas">Herramientas</a>
+        <div class="hidden md:flex space-x-6 lg:space-x-8 uppercase-tracking font-medium">
+          <a class="hover:text-sand-dark transition-colors py-2" href="#servicios">Servicios</a>
+          <a class="hover:text-sand-dark transition-colors py-2" href="#herramientas">Herramientas</a>
         </div>
         <!-- Logo -->
         <div class="flex-shrink-0 flex flex-col items-center">
-          <span class="text-2xl font-serif tracking-widest text-charcoal">DERLY</span>
-          <span class="text-[0.6rem] tracking-[0.4em] text-sand-dark -mt-1">BIENESTAR & VIDA</span>
+          <span class="text-xl sm:text-2xl font-serif tracking-widest text-charcoal">DERLY</span>
+          <span class="text-[0.5rem] sm:text-[0.6rem] tracking-[0.3em] sm:tracking-[0.4em] text-sand-dark -mt-1">BIENESTAR & VIDA</span>
         </div>
         <!-- Desktop Menu Right -->
-        <div class="hidden md:flex space-x-8 uppercase-tracking font-medium">
-          <a class="hover:text-sand-dark transition-colors" href="#retiros">Retiros</a>
-          <a class="hover:text-sand-dark transition-colors" href="#sobre-mi">Sobre Mí</a>
-          <a class="hover:text-sand-dark transition-colors" href="#contacto">Contacto</a>
+        <div class="hidden md:flex space-x-6 lg:space-x-8 uppercase-tracking font-medium">
+          <a class="hover:text-sand-dark transition-colors py-2" href="#retiros">Retiros</a>
+          <a class="hover:text-sand-dark transition-colors py-2" href="#sobre-mi">Sobre Mí</a>
+          <a class="hover:text-sand-dark transition-colors py-2" href="#contacto">Contacto</a>
         </div>
-        <!-- Mobile Menu Icon -->
-        <div class="md:hidden flex items-center">
-          <button class="text-charcoal p-2">
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden">
+          <button id="menu-toggle" class="text-charcoal p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Abrir menú" aria-expanded="false">
+            <svg id="menu-icon-open" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
+            </svg>
+            <svg id="menu-icon-close" class="h-6 w-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
             </svg>
           </button>
         </div>
+      </div>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="md:hidden border-t border-sand-medium bg-sand-light">
+      <div class="px-4 py-4 space-y-1">
+        <a class="block py-3 px-2 uppercase-tracking font-medium hover:text-sand-dark transition-colors" href="#servicios">Servicios</a>
+        <a class="block py-3 px-2 uppercase-tracking font-medium hover:text-sand-dark transition-colors" href="#herramientas">Herramientas</a>
+        <a class="block py-3 px-2 uppercase-tracking font-medium hover:text-sand-dark transition-colors" href="#retiros">Retiros</a>
+        <a class="block py-3 px-2 uppercase-tracking font-medium hover:text-sand-dark transition-colors" href="#sobre-mi">Sobre Mí</a>
+        <a class="block py-3 px-2 uppercase-tracking font-medium hover:text-sand-dark transition-colors" href="#contacto">Contacto</a>
       </div>
     </div>
   </nav>
   <!-- END: Navigation -->
 
   <!-- BEGIN: Hero Section -->
-  <header class="relative h-[90vh] overflow-hidden flex items-center">
+  <header class="relative min-h-[70vh] sm:min-h-[80vh] lg:h-[90vh] overflow-hidden flex items-center">
     <!-- Hero Image -->
     <div class="absolute inset-0 z-0">
-      <img alt="Derly" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8JV333mqfUYJOq3cVGMNX2XYTf4Bs9j1Mhw3TyJEtkGOSdOBBCzv0Y7bq027s0vy8ueBLQCDYjfUH3jj5SJ0SalVI5gJzUYu-xKAkMRne9ji1xbK3y-E7msVzT3Yt3UuBei-5CuDdPRSuno-IpPjNBVLm1noek_jl6VOPF7HT9TByX-hqjbSCZcfG3QL5xLqc5_jVXeLiARt2ntaz96-DTXzkUczAfVQA4iXVd9iz7hLG1iELXu7kZmwsPfVhsmeATLtbwH4gQP9q"/>
+      <img alt="Derly - Coach de Bienestar" class="w-full h-full object-cover" loading="eager" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8JV333mqfUYJOq3cVGMNX2XYTf4Bs9j1Mhw3TyJEtkGOSdOBBCzv0Y7bq027s0vy8ueBLQCDYjfUH3jj5SJ0SalVI5gJzUYu-xKAkMRne9ji1xbK3y-E7msVzT3Yt3UuBei-5CuDdPRSuno-IpPjNBVLm1noek_jl6VOPF7HT9TByX-hqjbSCZcfG3QL5xLqc5_jVXeLiARt2ntaz96-DTXzkUczAfVQA4iXVd9iz7hLG1iELXu7kZmwsPfVhsmeATLtbwH4gQP9q"/>
     </div>
     <!-- Hero Content Card -->
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-      <div class="max-w-xl hero-overlay p-10 md:p-16 text-center md:text-left">
-        <h1 class="text-4xl md:text-6xl font-serif text-charcoal leading-tight mb-4">
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-12 sm:py-0">
+      <div class="max-w-xl hero-overlay p-8 sm:p-10 md:p-16 text-center md:text-left">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-charcoal leading-tight mb-3 sm:mb-4">
           DESCUBRE <br/>TU MEJOR
         </h1>
-        <p class="text-2xl md:text-3xl font-serif italic text-charcoal mb-4">Versión de Ti Misma</p>
-        <div class="w-16 h-px bg-sand-dark mx-auto md:mx-0 mb-6"></div>
-        <p class="uppercase-tracking text-sand-dark font-semibold mb-8">Con Derly</p>
-        <a class="inline-block px-10 py-4 bg-sand-dark text-white uppercase-tracking hover:bg-opacity-90 transition-all" href="#">Comienza Ahora</a>
+        <p class="text-xl sm:text-2xl md:text-3xl font-serif italic text-charcoal mb-3 sm:mb-4">Versión de Ti Misma</p>
+        <div class="w-12 sm:w-16 h-px bg-sand-dark mx-auto md:mx-0 mb-4 sm:mb-6"></div>
+        <p class="uppercase-tracking text-sand-dark font-semibold mb-6 sm:mb-8">Con Derly</p>
+        <a class="inline-block px-8 sm:px-10 py-3.5 sm:py-4 bg-sand-dark text-white uppercase-tracking hover:bg-opacity-90 transition-all min-h-[44px]" href="#contacto">Comienza Ahora</a>
       </div>
     </div>
   </header>
   <!-- END: Hero Section -->
 
-  <!-- BEGIN: Social Proof / Logos -->
-  <section class="py-12 bg-white border-b border-sand-medium">
+  <!-- BEGIN: Social Proof -->
+  <section class="py-8 sm:py-12 bg-white border-b border-sand-medium">
     <div class="max-w-7xl mx-auto px-4">
-      <p class="text-center uppercase-tracking text-gray-400 mb-8">Reconocida por</p>
-      <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all">
-        <span class="font-serif text-xl font-bold italic">Bienestar</span>
-        <span class="font-serif text-xl font-bold italic">Salud & Vida</span>
-        <span class="font-serif text-xl font-bold italic">Mujer Hoy</span>
-        <span class="font-serif text-xl font-bold italic">Mente Sana</span>
+      <p class="text-center uppercase-tracking text-gray-400 mb-6 sm:mb-8">Reconocida por</p>
+      <div class="flex flex-wrap justify-center items-center gap-4 sm:gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all">
+        <span class="font-serif text-lg sm:text-xl font-bold italic">Bienestar</span>
+        <span class="font-serif text-lg sm:text-xl font-bold italic">Salud & Vida</span>
+        <span class="font-serif text-lg sm:text-xl font-bold italic">Mujer Hoy</span>
+        <span class="font-serif text-lg sm:text-xl font-bold italic">Mente Sana</span>
       </div>
     </div>
   </section>
   <!-- END: Social Proof -->
 
   <!-- BEGIN: About Derly -->
-  <section id="sobre-mi" class="py-24 bg-sand-light">
+  <section id="sobre-mi" class="py-16 sm:py-20 lg:py-24 bg-sand-light">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid md:grid-cols-2 gap-16 items-center">
+      <div class="grid md:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
         <div class="img-hover-zoom">
-          <img alt="Derly en su elemento" class="w-full h-auto object-cover" src="derly-libro.jpeg"/>
+          <img alt="Derly en su elemento" class="w-full h-auto object-cover" loading="lazy" src="derly-libro.jpeg"/>
         </div>
-        <div class="space-y-6">
-          <h2 class="text-4xl md:text-5xl font-serif leading-tight">HOLA, SOY DERLY</h2>
+        <div class="space-y-5 sm:space-y-6">
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif leading-tight">HOLA, SOY DERLY</h2>
           <p class="uppercase-tracking text-sand-dark font-medium">Coach de Vida & Bienestar</p>
-          <div class="space-y-4 text-gray-600 leading-relaxed font-light">
+          <div class="space-y-4 text-gray-600 leading-relaxed font-light text-sm sm:text-base">
             <p>Ayudo a mujeres que han construido éxito pero sienten que hay un capítulo extraordinario esperándolas. Ilumino caminos hacia posibilidades que aún no has imaginado para ti.</p>
             <p>Ya sea a través de mis retiros de lujo, donde la transformación sucede con vistas impresionantes y mentoría de alto nivel, o cuando estoy hablando ante una sala llena de personas increíbles, mi misión es ayudarte a expandirte más allá de lo que ya has logrado.</p>
             <p>Mi enfoque no se trata de arreglar lo que está roto (¡ya eres increíble!). Se trata de amplificar lo que ya funciona, potenciando tu capacidad para recibir mayor éxito, amor y plenitud.</p>
           </div>
-          <div class="pt-4">
-            <a class="inline-block px-10 py-4 border border-sand-dark text-sand-dark uppercase-tracking hover:bg-sand-dark hover:text-white transition-all" href="#">¡Conóceme!</a>
+          <div class="pt-2 sm:pt-4">
+            <a class="inline-block px-8 sm:px-10 py-3.5 sm:py-4 border border-sand-dark text-sand-dark uppercase-tracking hover:bg-sand-dark hover:text-white transition-all min-h-[44px]" href="#contacto">¡Conóceme!</a>
           </div>
         </div>
       </div>
@@ -141,33 +169,33 @@
   <!-- END: About Derly -->
 
   <!-- BEGIN: Retreat Spotlight -->
-  <section id="retiros" class="py-20 bg-cream-soft overflow-hidden">
+  <section id="retiros" class="py-16 sm:py-20 bg-cream-soft overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-col md:flex-row items-center gap-12">
-        <div class="w-full md:w-1/2 space-y-8">
-          <h2 class="text-4xl font-serif">El Retiro de <br/>Bienestar</h2>
-          <ul class="space-y-4">
-            <li class="flex items-start gap-4">
-              <span class="text-sand-dark mt-1">✦</span>
-              <p class="text-gray-600">3 noches, 4 días de experiencia transformadora (¡apúntate a la lista de espera, los cupos se agotan rápido!)</p>
+      <div class="flex flex-col md:flex-row items-center gap-8 sm:gap-12">
+        <div class="w-full md:w-1/2 space-y-6 sm:space-y-8">
+          <h2 class="text-3xl sm:text-4xl font-serif">El Retiro de <br/>Bienestar</h2>
+          <ul class="space-y-3 sm:space-y-4">
+            <li class="flex items-start gap-3 sm:gap-4">
+              <span class="text-sand-dark mt-1 flex-shrink-0">✦</span>
+              <p class="text-gray-600 text-sm sm:text-base">3 noches, 4 días de experiencia transformadora (¡apúntate a la lista de espera, los cupos se agotan rápido!)</p>
             </li>
-            <li class="flex items-start gap-4">
-              <span class="text-sand-dark mt-1">✦</span>
-              <p class="text-gray-600">Comidas orgánicas preparadas frescas por nuestro Chef privado (Desayuno, Almuerzo y Cena)</p>
+            <li class="flex items-start gap-3 sm:gap-4">
+              <span class="text-sand-dark mt-1 flex-shrink-0">✦</span>
+              <p class="text-gray-600 text-sm sm:text-base">Comidas orgánicas preparadas frescas por nuestro Chef privado (Desayuno, Almuerzo y Cena)</p>
             </li>
-            <li class="flex items-start gap-4">
-              <span class="text-sand-dark mt-1">✦</span>
-              <p class="text-gray-600">Yoga diario + prácticas de embodiment para comenzar nuestros días con energía e intención</p>
+            <li class="flex items-start gap-3 sm:gap-4">
+              <span class="text-sand-dark mt-1 flex-shrink-0">✦</span>
+              <p class="text-gray-600 text-sm sm:text-base">Yoga diario + prácticas de embodiment para comenzar nuestros días con energía e intención</p>
             </li>
-            <li class="flex items-start gap-4">
-              <span class="text-sand-dark mt-1">✦</span>
-              <p class="text-gray-600">Talleres y actividades transformadoras (ceremonia de cacao sagrado + excursión privada en bote) ¡y más!</p>
+            <li class="flex items-start gap-3 sm:gap-4">
+              <span class="text-sand-dark mt-1 flex-shrink-0">✦</span>
+              <p class="text-gray-600 text-sm sm:text-base">Talleres y actividades transformadoras (ceremonia de cacao sagrado + excursión privada en bote) ¡y más!</p>
             </li>
           </ul>
-          <a class="inline-block px-10 py-3 bg-sand-dark/80 text-white uppercase-tracking" href="#">Trabaja Conmigo</a>
+          <a class="inline-block px-8 sm:px-10 py-3 bg-sand-dark/80 text-white uppercase-tracking min-h-[44px] hover:bg-sand-dark transition-all" href="#">Trabaja Conmigo</a>
         </div>
         <div class="w-full md:w-1/2 relative">
-          <img alt="Ubicación del Retiro de Lujo" class="relative z-10 w-full rounded-sm shadow-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD26rKs3MkiAvSrZ0mv1xTXyhAhL09prJxrVmUHcBJLVs5bAZ4XiM3lbqpphTLncvQfsTDDqcEpgvOiaf-_UrwrZvuEHHfKGgcJjcRxjSWDn10tapE9l6K6rd9i1AaO79FzvV1idv8Pa4R5x1PvkUX2TdQGzS9uqKjvHO_1HX2tYuZh0V0OXbRlpOohCTNxpUt_mTjk40kKwKBDafIQaxEwl5I5-_F-yd4yAM8gTEt4bfb97WKDH-dMNitPQm0egjkmG0_PC1BPmLlt"/>
+          <img alt="Ubicación del Retiro de Lujo" class="relative z-10 w-full rounded-sm shadow-xl" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD26rKs3MkiAvSrZ0mv1xTXyhAhL09prJxrVmUHcBJLVs5bAZ4XiM3lbqpphTLncvQfsTDDqcEpgvOiaf-_UrwrZvuEHHfKGgcJjcRxjSWDn10tapE9l6K6rd9i1AaO79FzvV1idv8Pa4R5x1PvkUX2TdQGzS9uqKjvHO_1HX2tYuZh0V0OXbRlpOohCTNxpUt_mTjk40kKwKBDafIQaxEwl5I5-_F-yd4yAM8gTEt4bfb97WKDH-dMNitPQm0egjkmG0_PC1BPmLlt"/>
         </div>
       </div>
     </div>
@@ -175,9 +203,9 @@
   <!-- END: Retreat Spotlight -->
 
   <!-- BEGIN: Quote Section -->
-  <section class="py-32 bg-charcoal text-white text-center">
-    <div class="max-w-4xl mx-auto px-4">
-      <blockquote class="text-3xl md:text-4xl font-serif italic leading-snug mb-8">
+  <section class="py-20 sm:py-24 lg:py-32 bg-charcoal text-white text-center">
+    <div class="max-w-4xl mx-auto px-6 sm:px-8">
+      <blockquote class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif italic leading-snug mb-6 sm:mb-8">
         "Cuando expandes tu mentalidad y tu capacidad de recibir, posibilidades que aún no has imaginado se convierten en tu nueva realidad."
       </blockquote>
       <p class="uppercase-tracking text-sand-dark font-semibold">— DERLY</p>
@@ -186,33 +214,33 @@
   <!-- END: Quote Section -->
 
   <!-- BEGIN: Offerings Grid -->
-  <section id="servicios" class="py-24 bg-sand-medium/30">
-    <div class="max-w-7xl mx-auto px-4 text-center mb-16">
+  <section id="servicios" class="py-16 sm:py-20 lg:py-24 bg-sand-medium/30">
+    <div class="max-w-7xl mx-auto px-4 text-center mb-10 sm:mb-16">
       <p class="uppercase-tracking text-sand-dark font-medium mb-2">Formas de trabajar conmigo</p>
-      <h2 class="text-5xl font-serif">SERVICIOS</h2>
+      <h2 class="text-4xl sm:text-5xl font-serif">SERVICIOS</h2>
     </div>
     <div class="max-w-7xl mx-auto px-4">
-      <div class="grid md:grid-cols-3 gap-12">
+      <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
         <!-- Offering 1 -->
-        <div class="bg-white p-8 group hover:shadow-2xl transition-all duration-500">
-          <span class="text-6xl font-serif text-sand-medium group-hover:text-sand-dark transition-colors">01</span>
-          <h3 class="text-2xl font-serif mt-4 mb-6">Coaching Personal</h3>
-          <p class="text-gray-600 leading-relaxed font-light mb-8">Sesiones 1:1 de alto nivel donde expandiremos tu potencial a través de una aplicación personalizada de mi método de transformación integral.</p>
-          <a class="text-sm font-bold uppercase-tracking border-b-2 border-sand-dark pb-1" href="#">Saber Más</a>
+        <div class="bg-white p-6 sm:p-8 group hover:shadow-2xl transition-all duration-500">
+          <span class="text-5xl sm:text-6xl font-serif text-sand-medium group-hover:text-sand-dark transition-colors">01</span>
+          <h3 class="text-xl sm:text-2xl font-serif mt-3 sm:mt-4 mb-4 sm:mb-6">Coaching Personal</h3>
+          <p class="text-gray-600 leading-relaxed font-light mb-6 sm:mb-8 text-sm sm:text-base">Sesiones 1:1 de alto nivel donde expandiremos tu potencial a través de una aplicación personalizada de mi método de transformación integral.</p>
+          <a class="text-sm font-bold uppercase-tracking border-b-2 border-sand-dark pb-1 hover:text-sand-dark transition-colors" href="#">Saber Más</a>
         </div>
         <!-- Offering 2 -->
-        <div class="bg-white p-8 group hover:shadow-2xl transition-all duration-500 md:-mt-8">
-          <span class="text-6xl font-serif text-sand-medium group-hover:text-sand-dark transition-colors">02</span>
-          <h3 class="text-2xl font-serif mt-4 mb-6">Retiros de Bienestar</h3>
-          <p class="text-gray-600 leading-relaxed font-light mb-8">Experiencias inmersivas donde conectarás contigo misma, rodeada de naturaleza y energía transformadora para reclamar tu magia interior.</p>
-          <a class="text-sm font-bold uppercase-tracking border-b-2 border-sand-dark pb-1" href="#">Lista de Espera</a>
+        <div class="bg-white p-6 sm:p-8 group hover:shadow-2xl transition-all duration-500 md:-mt-8">
+          <span class="text-5xl sm:text-6xl font-serif text-sand-medium group-hover:text-sand-dark transition-colors">02</span>
+          <h3 class="text-xl sm:text-2xl font-serif mt-3 sm:mt-4 mb-4 sm:mb-6">Retiros de Bienestar</h3>
+          <p class="text-gray-600 leading-relaxed font-light mb-6 sm:mb-8 text-sm sm:text-base">Experiencias inmersivas donde conectarás contigo misma, rodeada de naturaleza y energía transformadora para reclamar tu magia interior.</p>
+          <a class="text-sm font-bold uppercase-tracking border-b-2 border-sand-dark pb-1 hover:text-sand-dark transition-colors" href="#">Lista de Espera</a>
         </div>
         <!-- Offering 3 -->
-        <div class="bg-white p-8 group hover:shadow-2xl transition-all duration-500">
-          <span class="text-6xl font-serif text-sand-medium group-hover:text-sand-dark transition-colors">03</span>
-          <h3 class="text-2xl font-serif mt-4 mb-6">Programas Grupales</h3>
-          <p class="text-gray-600 leading-relaxed font-light mb-8">La base completa para sanar y reprogramar creencias limitantes y patrones que te bloquean para manifestar tus deseos más profundos.</p>
-          <a class="text-sm font-bold uppercase-tracking border-b-2 border-sand-dark pb-1" href="#">Únete</a>
+        <div class="bg-white p-6 sm:p-8 group hover:shadow-2xl transition-all duration-500 sm:col-span-2 md:col-span-1">
+          <span class="text-5xl sm:text-6xl font-serif text-sand-medium group-hover:text-sand-dark transition-colors">03</span>
+          <h3 class="text-xl sm:text-2xl font-serif mt-3 sm:mt-4 mb-4 sm:mb-6">Programas Grupales</h3>
+          <p class="text-gray-600 leading-relaxed font-light mb-6 sm:mb-8 text-sm sm:text-base">La base completa para sanar y reprogramar creencias limitantes y patrones que te bloquean para manifestar tus deseos más profundos.</p>
+          <a class="text-sm font-bold uppercase-tracking border-b-2 border-sand-dark pb-1 hover:text-sand-dark transition-colors" href="#">Únete</a>
         </div>
       </div>
     </div>
@@ -220,47 +248,47 @@
   <!-- END: Offerings Grid -->
 
   <!-- BEGIN: Masterclass Banner -->
-  <section class="py-12 px-4">
+  <section class="py-8 sm:py-12 px-4">
     <div class="max-w-6xl mx-auto bg-white shadow-lg overflow-hidden flex flex-col md:flex-row items-center border border-sand-medium">
       <div class="w-full md:w-1/4">
-        <img alt="Masterclass" class="w-full h-48 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBssv9ysGtVg2pX--E-hRTPU6grq_xlW2ERqGy5os3m0RrNwrBcIEN_009vOPPptjEtxiaPCndVhnb7z8uF9sVhrDTMszfn-rXAbzVvmHZTnFRia20wrv-bhhi14o7eTr3zOfT_AtSo6p0nmsNCKuxcmCYmsXknqn1WfGPuUQSpNtXRBBMUA2GMM7mOTGAImTQfMLjJQWVWTBrELEc795VXl52Ax-8kA9FmGloGAPakG2Y8zqc1vapH3g3Z3-H_UH11UMy6JBKrSpPp"/>
+        <img alt="Masterclass de Bienestar" class="w-full h-48 object-cover" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBssv9ysGtVg2pX--E-hRTPU6grq_xlW2ERqGy5os3m0RrNwrBcIEN_009vOPPptjEtxiaPCndVhnb7z8uF9sVhrDTMszfn-rXAbzVvmHZTnFRia20wrv-bhhi14o7eTr3zOfT_AtSo6p0nmsNCKuxcmCYmsXknqn1WfGPuUQSpNtXRBBMUA2GMM7mOTGAImTQfMLjJQWVWTBrELEc795VXl52Ax-8kA9FmGloGAPakG2Y8zqc1vapH3g3Z3-H_UH11UMy6JBKrSpPp"/>
       </div>
-      <div class="flex-grow p-8 text-center md:text-left">
-        <h3 class="text-2xl font-serif mb-2">MASTERCLASS DE BIENESTAR</h3>
-        <p class="text-gray-500 italic">Empieza a manifestar más abundancia, equilibrio y plenitud, ¡AHORA!</p>
+      <div class="flex-grow p-6 sm:p-8 text-center md:text-left">
+        <h3 class="text-xl sm:text-2xl font-serif mb-2">MASTERCLASS DE BIENESTAR</h3>
+        <p class="text-gray-500 italic text-sm sm:text-base">Empieza a manifestar más abundancia, equilibrio y plenitud, ¡AHORA!</p>
       </div>
-      <div class="p-8">
-        <a class="inline-block px-10 py-4 bg-sand-dark text-white uppercase-tracking text-sm" href="#">Acceder Ahora</a>
+      <div class="p-6 sm:p-8 pt-0 md:pt-8">
+        <a class="inline-block px-8 sm:px-10 py-3.5 sm:py-4 bg-sand-dark text-white uppercase-tracking text-sm min-h-[44px] hover:bg-opacity-90 transition-all" href="#">Acceder Ahora</a>
       </div>
     </div>
   </section>
   <!-- END: Masterclass Banner -->
 
   <!-- BEGIN: Testimonials -->
-  <section class="py-24 bg-cream-soft">
+  <section class="py-16 sm:py-20 lg:py-24 bg-cream-soft">
     <div class="max-w-7xl mx-auto px-4">
-      <h2 class="text-center font-serif text-3xl mb-16 italic">Lo que dicen mis clientas</h2>
-      <div class="grid md:grid-cols-3 gap-8">
+      <h2 class="text-center font-serif text-2xl sm:text-3xl mb-12 sm:mb-16 italic">Lo que dicen mis clientas</h2>
+      <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-8 pt-10">
         <!-- Testimonial 1 -->
-        <div class="bg-white p-10 relative text-center">
-          <img alt="Clienta" class="w-20 h-20 rounded-full mx-auto -mt-16 mb-6 border-4 border-white shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqpNFJeds6xavU_uccQKopCOM0ErbD2c3_NYaVT6VlX3taEOtlSxx2Iwp4QqmZew54DYPcduIWGJxVxw9opEDfecLNWC-esfMAmJMOHCTKzp5-0EAo-Rj6P3IF8I3Y1Am19TzmA-prn1fGHuUgW2a47CXn7hVmgtpFGZAWwsIJViD21HwnSRxlFqEJ_Zd5Zr9J5_666eOj3QUP-2ZnBFZqoCpT_jWow6urhmP6kkjdeQH9YPx1UaKQBLextefWGKDq7h_qc89dE-2E"/>
-          <p class="text-gray-600 font-light italic mb-6">"Derly es realmente INCREÍBLE. Tomé sus cursos y la contraté como coach, ha sido una de las mejores inversiones que he hecho en mí misma."</p>
+        <div class="bg-white p-8 sm:p-10 relative text-center">
+          <img alt="Ana M. - Emprendedora" class="w-20 h-20 rounded-full mx-auto -mt-16 mb-6 border-4 border-white shadow-lg object-cover" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqpNFJeds6xavU_uccQKopCOM0ErbD2c3_NYaVT6VlX3taEOtlSxx2Iwp4QqmZew54DYPcduIWGJxVxw9opEDfecLNWC-esfMAmJMOHCTKzp5-0EAo-Rj6P3IF8I3Y1Am19TzmA-prn1fGHuUgW2a47CXn7hVmgtpFGZAWwsIJViD21HwnSRxlFqEJ_Zd5Zr9J5_666eOj3QUP-2ZnBFZqoCpT_jWow6urhmP6kkjdeQH9YPx1UaKQBLextefWGKDq7h_qc89dE-2E"/>
+          <p class="text-gray-600 font-light italic mb-6 text-sm sm:text-base">"Derly es realmente INCREÍBLE. Tomé sus cursos y la contraté como coach, ha sido una de las mejores inversiones que he hecho en mí misma."</p>
           <div class="w-8 h-px bg-sand-dark mx-auto mb-4"></div>
           <p class="uppercase-tracking font-bold text-xs">Ana M.</p>
           <p class="text-[0.65rem] text-gray-400">EMPRENDEDORA</p>
         </div>
         <!-- Testimonial 2 -->
-        <div class="bg-white p-10 relative text-center">
-          <img alt="Clienta" class="w-20 h-20 rounded-full mx-auto -mt-16 mb-6 border-4 border-white shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABDiRHrLqreMJZMy4gT-csWnqlibNNzX_d9-5CBb4xaRcuId2Fvlrvb36Wmd3jNS2kW8hjBLjZ8HmylkD74w5GSTpB3UR1Y3az6ojtJV5bLpka5LIQIM8eNuEgOE3fFI9p_dyti_saVWj4f5pCvTrafHtt-tN9eZjTmbiTaP4xf37T9qpbvK4IrSFaSmjH38z0aJkkEVfaNyd6uEwqUfYkoof9GLIuAqBLrJvs8mU0THR5ughIDlNn_9ckbX4MtbpxQuVxYbF1hYMu"/>
-          <p class="text-gray-600 font-light italic mb-6">"El retiro fue increíble. Muchas cosas de mi pasado me afectaban, pero Derly me ayudó a superarlas. ¡Manifesté mi negocio!"</p>
+        <div class="bg-white p-8 sm:p-10 relative text-center">
+          <img alt="Carolina P. - Diseñadora" class="w-20 h-20 rounded-full mx-auto -mt-16 mb-6 border-4 border-white shadow-lg object-cover" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABDiRHrLqreMJZMy4gT-csWnqlibNNzX_d9-5CBb4xaRcuId2Fvlrvb36Wmd3jNS2kW8hjBLjZ8HmylkD74w5GSTpB3UR1Y3az6ojtJV5bLpka5LIQIM8eNuEgOE3fFI9p_dyti_saVWj4f5pCvTrafHtt-tN9eZjTmbiTaP4xf37T9qpbvK4IrSFaSmjH38z0aJkkEVfaNyd6uEwqUfYkoof9GLIuAqBLrJvs8mU0THR5ughIDlNn_9ckbX4MtbpxQuVxYbF1hYMu"/>
+          <p class="text-gray-600 font-light italic mb-6 text-sm sm:text-base">"El retiro fue increíble. Muchas cosas de mi pasado me afectaban, pero Derly me ayudó a superarlas. ¡Manifesté mi negocio!"</p>
           <div class="w-8 h-px bg-sand-dark mx-auto mb-4"></div>
           <p class="uppercase-tracking font-bold text-xs">Carolina P.</p>
           <p class="text-[0.65rem] text-gray-400">DISEÑADORA</p>
         </div>
         <!-- Testimonial 3 -->
-        <div class="bg-white p-10 relative text-center">
-          <img alt="Clienta" class="w-20 h-20 rounded-full mx-auto -mt-16 mb-6 border-4 border-white shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuGTkqyqU0WNWyKU62ahtkoL-q6-z9OzzKiuojbpBQL0ik_0j6QdSdEVPkwiYrokejWVPMFwZ8RBKzxQFGa6nxhpFNing2MwB_HZ7Rrr--jpb3WDHJxe7Ru2d1XbKXNBk2x150PWK6uW9099wM1c52__FA76JRVNdrOe3vUvanFsGC-z7P5sskaiHqCyvgCGjxYOC-AOaS1m8TjpHxazDwcYnIF0I_fH96GHbNcOddAsrkPoO1EjHeeZPyu0lrAtUILPoO9JkRTDrg"/>
-          <p class="text-gray-600 font-light italic mb-6">"Derly es simplemente INCREÍBLE. No solo es tu mayor animadora, es honesta y directa. La recomiendo a todas."</p>
+        <div class="bg-white p-8 sm:p-10 relative text-center sm:col-span-2 md:col-span-1">
+          <img alt="Laura G. - Ejecutiva" class="w-20 h-20 rounded-full mx-auto -mt-16 mb-6 border-4 border-white shadow-lg object-cover" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuGTkqyqU0WNWyKU62ahtkoL-q6-z9OzzKiuojbpBQL0ik_0j6QdSdEVPkwiYrokejWVPMFwZ8RBKzxQFGa6nxhpFNing2MwB_HZ7Rrr--jpb3WDHJxe7Ru2d1XbKXNBk2x150PWK6uW9099wM1c52__FA76JRVNdrOe3vUvanFsGC-z7P5sskaiHqCyvgCGjxYOC-AOaS1m8TjpHxazDwcYnIF0I_fH96GHbNcOddAsrkPoO1EjHeeZPyu0lrAtUILPoO9JkRTDrg"/>
+          <p class="text-gray-600 font-light italic mb-6 text-sm sm:text-base">"Derly es simplemente INCREÍBLE. No solo es tu mayor animadora, es honesta y directa. La recomiendo a todas."</p>
           <div class="w-8 h-px bg-sand-dark mx-auto mb-4"></div>
           <p class="uppercase-tracking font-bold text-xs">Laura G.</p>
           <p class="text-[0.65rem] text-gray-400">EJECUTIVA</p>
@@ -271,42 +299,42 @@
   <!-- END: Testimonials -->
 
   <!-- BEGIN: Free Tools -->
-  <section id="herramientas" class="py-24 bg-white">
+  <section id="herramientas" class="py-16 sm:py-20 lg:py-24 bg-white">
     <div class="max-w-7xl mx-auto px-4">
-      <div class="flex items-center gap-8 mb-16">
-        <h2 class="text-5xl font-serif whitespace-nowrap">RECURSOS <span class="italic font-light">Gratis</span></h2>
-        <div class="w-full h-px bg-sand-medium"></div>
+      <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 mb-10 sm:mb-16">
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-serif sm:whitespace-nowrap">RECURSOS <span class="italic font-light">Gratis</span></h2>
+        <div class="hidden sm:block w-full h-px bg-sand-medium"></div>
       </div>
-      <div class="grid md:grid-cols-3 gap-8">
+      <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
         <!-- Tool 1 -->
         <div class="text-center group">
-          <div class="relative overflow-hidden mb-6 aspect-[4/5] bg-sand-light p-4">
-            <img alt="Reto" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHikctUjLQ_ctXyj-ln15234QEVILfZLJwBbX9DCqgDg0acR2UEJlrW4hyo1f8Ua8_LaIwdtFTE_7rsdeAYt83qUfKCQcstnL-PuTjkcqdGLP_z60Cqqyp-Qe_r0mf1JyX-I3bsZbUtyJEoefl4f_FRhyUUHSKoM9Mw0IGHrXh86z-MzwF9eHmlxf8MGpi6DVHDkUiwau5_rEAuiQssTXJaLR8zGcOLFe-Yxm5Izrx-C6IQJSVQavLiro8al_vmyAT_77oFLiJ_6rv"/>
-            <div class="absolute bottom-8 left-0 right-0">
-              <span class="bg-white/90 px-6 py-2 uppercase-tracking text-[0.65rem] font-bold">Reto Gratis</span>
+          <div class="relative overflow-hidden mb-4 sm:mb-6 aspect-[4/5] bg-sand-light p-4">
+            <img alt="Reto de 5 días de bienestar" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHikctUjLQ_ctXyj-ln15234QEVILfZLJwBbX9DCqgDg0acR2UEJlrW4hyo1f8Ua8_LaIwdtFTE_7rsdeAYt83qUfKCQcstnL-PuTjkcqdGLP_z60Cqqyp-Qe_r0mf1JyX-I3bsZbUtyJEoefl4f_FRhyUUHSKoM9Mw0IGHrXh86z-MzwF9eHmlxf8MGpi6DVHDkUiwau5_rEAuiQssTXJaLR8zGcOLFe-Yxm5Izrx-C6IQJSVQavLiro8al_vmyAT_77oFLiJ_6rv"/>
+            <div class="absolute bottom-6 sm:bottom-8 left-0 right-0">
+              <span class="bg-white/90 px-4 sm:px-6 py-2 uppercase-tracking text-[0.6rem] sm:text-[0.65rem] font-bold">Reto Gratis</span>
             </div>
           </div>
-          <h4 class="font-serif text-xl">RETO DE 5 DÍAS DE BIENESTAR</h4>
+          <h4 class="font-serif text-lg sm:text-xl">RETO DE 5 DÍAS DE BIENESTAR</h4>
         </div>
         <!-- Tool 2 -->
         <div class="text-center group">
-          <div class="relative overflow-hidden mb-6 aspect-[4/5] bg-sand-light p-4">
-            <img alt="Masterclass" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCCzaSMP_QdhDdXSD1bP8GEZ9_3wXf5WMqIAG0q6FKappqTsGIUAiX505dSVCg3YvZ8d_OWQvtpQiLoQVf1lbO7T9WJ_i7O0hC8ofgLU0Qk7thmiHxl5OqWPuL9kln3K0qv1JwW4YOJGbH4yLhgPmEPiRN6AWGS_WLy7AOC84Y4iqiSqfbOQbcTWY7CaqQY65ehZgx7Q7VxpAXXhMJPCbt-M1Zb1MT_KcHYygGmoRnXmAhkgE4xlwEeIDvPG0z1GqaG6AZ_lAO8P-3"/>
-            <div class="absolute bottom-8 left-0 right-0">
-              <span class="bg-white/90 px-6 py-2 uppercase-tracking text-[0.65rem] font-bold">Masterclass Gratis</span>
+          <div class="relative overflow-hidden mb-4 sm:mb-6 aspect-[4/5] bg-sand-light p-4">
+            <img alt="Masterclass Tablero de Visión" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCCzaSMP_QdhDdXSD1bP8GEZ9_3wXf5WMqIAG0q6FKappqTsGIUAiX505dSVCg3YvZ8d_OWQvtpQiLoQVf1lbO7T9WJ_i7O0hC8ofgLU0Qk7thmiHxl5OqWPuL9kln3K0qv1JwW4YOJGbH4yLhgPmEPiRN6AWGS_WLy7AOC84Y4iqiSqfbOQbcTWY7CaqQY65ehZgx7Q7VxpAXXhMJPCbt-M1Zb1MT_KcHYygGmoRnXmAhkgE4xlwEeIDvPG0z1GqaG6AZ_lAO8P-3"/>
+            <div class="absolute bottom-6 sm:bottom-8 left-0 right-0">
+              <span class="bg-white/90 px-4 sm:px-6 py-2 uppercase-tracking text-[0.6rem] sm:text-[0.65rem] font-bold">Masterclass Gratis</span>
             </div>
           </div>
-          <h4 class="font-serif text-xl">MASTERCLASS TABLERO DE VISIÓN</h4>
+          <h4 class="font-serif text-lg sm:text-xl">MASTERCLASS TABLERO DE VISIÓN</h4>
         </div>
         <!-- Tool 3 -->
-        <div class="text-center group">
-          <div class="relative overflow-hidden mb-6 aspect-[4/5] bg-sand-light p-4">
-            <img alt="Afirmaciones" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBddv2sZS_rW6PujA2Iorm3qd7ANg-b0I_eNfa9eGc4DJtDtO-442TJm6Ir6F2RRqdC_-NHZ5VIW1SZkV0Q9S96njkT68E88u_iVuI9JRN1k0fZOWcjx4rzNmc1xwbjgzBP2mrFq6bT9g3oaaxro90qNDBRSSu1Tz2Xq6PWsaD0qzmfkGdthk7Qjtj7JgKSgm7CMTiCl3R-OZiRA-vKpCnj_Dw2s6LRoJoYJ9Skm4yoY2X5zvT4miGULktoDPU4ARY0qN43stZwE5tj"/>
-            <div class="absolute bottom-8 left-0 right-0">
-              <span class="bg-white/90 px-6 py-2 uppercase-tracking text-[0.65rem] font-bold">Afirmaciones</span>
+        <div class="text-center group sm:col-span-2 md:col-span-1">
+          <div class="relative overflow-hidden mb-4 sm:mb-6 aspect-[4/5] bg-sand-light p-4 max-w-sm mx-auto md:max-w-none">
+            <img alt="100+ Afirmaciones Positivas" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBddv2sZS_rW6PujA2Iorm3qd7ANg-b0I_eNfa9eGc4DJtDtO-442TJm6Ir6F2RRqdC_-NHZ5VIW1SZkV0Q9S96njkT68E88u_iVuI9JRN1k0fZOWcjx4rzNmc1xwbjgzBP2mrFq6bT9g3oaaxro90qNDBRSSu1Tz2Xq6PWsaD0qzmfkGdthk7Qjtj7JgKSgm7CMTiCl3R-OZiRA-vKpCnj_Dw2s6LRoJoYJ9Skm4yoY2X5zvT4miGULktoDPU4ARY0qN43stZwE5tj"/>
+            <div class="absolute bottom-6 sm:bottom-8 left-0 right-0">
+              <span class="bg-white/90 px-4 sm:px-6 py-2 uppercase-tracking text-[0.6rem] sm:text-[0.65rem] font-bold">Afirmaciones</span>
             </div>
           </div>
-          <h4 class="font-serif text-xl">100+ AFIRMACIONES POSITIVAS</h4>
+          <h4 class="font-serif text-lg sm:text-xl">100+ AFIRMACIONES POSITIVAS</h4>
         </div>
       </div>
     </div>
@@ -314,67 +342,92 @@
   <!-- END: Free Tools -->
 
   <!-- BEGIN: Call to Action -->
-  <section class="relative py-32 bg-charcoal flex items-center justify-center overflow-hidden">
+  <section class="relative py-20 sm:py-24 lg:py-32 bg-charcoal flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0 opacity-20">
-      <img alt="Fondo" class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkXB9jWYxQezg3YOeSyH6YFH8i68lUUrcRftXIGqrZqSKnzgTLCzxw7WsHqqmaX6Q-ZazLNW3q5Kn3sioCIfn_Tf53GJTCpc7LnTKFeDVuAKSSoMI1uuI2JSTu3n-gnmJKKTOSIYSuEVgGmSmA7EIzlUfxWNJ5H3T_cNdcP38HjDDbIVtdACLXPDOjN1EZWpExiFEKyKnTva1ZnwEOpkC_vyitagsHc-HWCoIiUNZ18BxBqVNOVv8sx1tvQLKoESDdAQcbGzIX1PJn"/>
+      <img alt="" class="w-full h-full object-cover grayscale" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkXB9jWYxQezg3YOeSyH6YFH8i68lUUrcRftXIGqrZqSKnzgTLCzxw7WsHqqmaX6Q-ZazLNW3q5Kn3sioCIfn_Tf53GJTCpc7LnTKFeDVuAKSSoMI1uuI2JSTu3n-gnmJKKTOSIYSuEVgGmSmA7EIzlUfxWNJ5H3T_cNdcP38HjDDbIVtdACLXPDOjN1EZWpExiFEKyKnTva1ZnwEOpkC_vyitagsHc-HWCoIiUNZ18BxBqVNOVv8sx1tvQLKoESDdAQcbGzIX1PJn"/>
     </div>
-    <div class="relative z-10 text-center text-white px-4">
+    <div class="relative z-10 text-center text-white px-6">
       <p class="uppercase-tracking text-sand-dark mb-4">Trabaja Conmigo</p>
-      <h2 class="text-5xl md:text-6xl font-serif mb-6 leading-tight">¿LISTA PARA</h2>
-      <p class="text-2xl font-serif italic mb-10">Transformar Tu Vida?</p>
-      <a class="inline-block px-12 py-4 bg-sand-dark text-white uppercase-tracking hover:bg-opacity-90 transition-all" href="#">Comienza Hoy</a>
+      <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif mb-4 sm:mb-6 leading-tight">¿LISTA PARA</h2>
+      <p class="text-xl sm:text-2xl font-serif italic mb-8 sm:mb-10">Transformar Tu Vida?</p>
+      <a class="inline-block px-10 sm:px-12 py-3.5 sm:py-4 bg-sand-dark text-white uppercase-tracking hover:bg-opacity-90 transition-all min-h-[44px]" href="#contacto">Comienza Hoy</a>
     </div>
   </section>
   <!-- END: Call to Action -->
 
   <!-- BEGIN: Footer -->
-  <footer id="contacto" class="bg-sand-medium/20 py-16 border-t border-sand-medium">
+  <footer id="contacto" class="bg-sand-medium/20 py-12 sm:py-16 border-t border-sand-medium">
     <div class="max-w-7xl mx-auto px-4">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 items-start text-center md:text-left">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 sm:gap-12 items-start text-center md:text-left">
         <!-- Newsletter -->
         <div>
           <h5 class="uppercase-tracking font-bold mb-4">Suscríbete</h5>
           <p class="text-xs text-gray-500 mb-4 leading-relaxed">Recibe contenido exclusivo, tips de bienestar y novedades que Derly no comparte en ningún otro lugar.</p>
           <form class="flex border-b border-sand-dark pb-1">
-            <input class="bg-transparent border-none focus:ring-0 text-sm flex-grow p-0 placeholder-gray-400" placeholder="Tu Email" type="email"/>
-            <button class="text-xs font-bold uppercase-tracking text-sand-dark" type="submit">Unirme</button>
+            <input class="bg-transparent border-none focus:ring-0 text-sm flex-grow p-0 placeholder-gray-400 min-h-[44px]" placeholder="Tu Email" type="email" autocomplete="email"/>
+            <button class="text-xs font-bold uppercase-tracking text-sand-dark min-h-[44px] min-w-[44px] hover:opacity-70 transition-opacity" type="submit">Unirme</button>
           </form>
         </div>
         <!-- Brand Icon -->
         <div class="flex flex-col items-center">
-          <div class="w-24 h-24 border border-sand-dark rounded-full flex items-center justify-center mb-6">
-            <span class="text-3xl font-serif text-sand-dark italic">D</span>
+          <div class="w-20 h-20 sm:w-24 sm:h-24 border border-sand-dark rounded-full flex items-center justify-center mb-4 sm:mb-6">
+            <span class="text-2xl sm:text-3xl font-serif text-sand-dark italic">D</span>
           </div>
           <p class="text-sm font-serif italic text-sand-dark">Tu mejor versión te espera.</p>
         </div>
         <!-- Links -->
-        <div class="grid grid-cols-2 gap-4 uppercase-tracking text-[0.65rem] font-bold">
-          <a class="hover:text-sand-dark" href="#">Inicio</a>
-          <a class="hover:text-sand-dark" href="#retiros">Retiros</a>
-          <a class="hover:text-sand-dark" href="#servicios">Servicios</a>
-          <a class="hover:text-sand-dark" href="#herramientas">Herramientas</a>
-          <a class="hover:text-sand-dark" href="#sobre-mi">Sobre Mí</a>
-          <a class="hover:text-sand-dark" href="#contacto">Contacto</a>
+        <div class="grid grid-cols-2 gap-3 sm:gap-4 uppercase-tracking text-[0.65rem] font-bold">
+          <a class="hover:text-sand-dark transition-colors py-1" href="#">Inicio</a>
+          <a class="hover:text-sand-dark transition-colors py-1" href="#retiros">Retiros</a>
+          <a class="hover:text-sand-dark transition-colors py-1" href="#servicios">Servicios</a>
+          <a class="hover:text-sand-dark transition-colors py-1" href="#herramientas">Herramientas</a>
+          <a class="hover:text-sand-dark transition-colors py-1" href="#sobre-mi">Sobre Mí</a>
+          <a class="hover:text-sand-dark transition-colors py-1" href="#contacto">Contacto</a>
         </div>
       </div>
       <!-- Instagram Grid -->
-      <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4">
-        <img alt="Instagram" class="w-full aspect-square object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAoD7vfr85lStm2DdCIWS2TkJB42_syC0BT_-pVnKqE8s4Q1U0l9LQpfl4ZSkMFDJ5gUiLJ_-9NDd-1NWER0uZ-OsYeovzBDSA6ADQqMNCH7JzYKN2dL2ZDl_qgMmiSNyarlds-36_DiNLbe9ZiH4E6BG4qlDaMltXHoVUaokeygf-csEwcPbxCED52c_eHB-BIIIKA_eJu7Ci7iE8a3apJVcMS1oe0cIKaOY-nFZvJrMiY_tHmRxOaeSwPpj-tgM1fshptdOaW3EI"/>
-        <img alt="Instagram" class="w-full aspect-square object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAPO_2lfuwQ10bA3V6FcZN1Z7DI5c-FVESsoI6HHUdhdYxPlWYNfAC-5MZOEYhf25EA0L9IMqlhFzsY6I_4_tvFV_fU72lTeFR-26sxEDjLdnhb1ut2qVwOxOqPEdV9Dkg1Z9GBp0d_lKdqKkNh3czFiQwdHZuHNAkcpng9ZEMd0bLdOcGiOc00QNDVd-1db9Dx9M8s7NZHyNz20wnbXfNl_PQTqNvfiqMDPCP8R_LVH_rViC1-mUMm_LhVdjjEG3S_5qQFPSm7yt_"/>
-        <img alt="Instagram" class="w-full aspect-square object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgVJ6xdMKY76yPaZv9Sr8HbGKEvyuD0zpcbNxyEaZjnqEFAyuq7NH-ca4lsLWKKri7eU7ebTPvlT27cM6IWuJ4wwO_vyc5hpUZlB201asvXOH_DnkDE0SM92mKAn_t0AXNGMc_oxv0ysK4iI0luOJCzDOSOG3kYcm3pQ1dCic_YmaN5FF_IlaEVVebdI2c0cSFsB6OQzOYOo0MoXHl4V2VTyBp93aQj-MyStcOitr_QK8_JHFcZrBtxd9ZgOU5IhfFkgzZiwKAk3c2"/>
-        <img alt="Instagram" class="w-full aspect-square object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZWghJvmF1NFFIkUqgKzBOL9Lsg5gG0M27g-80DtB1WqwYk1_UxexTIkMKas6enpZ6xLFL9ryA29GzgCVe1VCwkt3f6RsKlSBmPg9rWOS_eXl_3wZfb8qv9S4ndP-_WwwtYRzVppDvmTKdOJvQPrI9jVcHMUB8mgJUWnhvfeN93DDatdPvpyBV-LqMTa4_c3hNPHQdpa746MbtFDNeE7nP3joi1h4QB7L6yvv6n-hTcubhKZ0Hx1KxH41uo4397O59kKc9qgBCvtHU"/>
+      <div class="mt-12 sm:mt-16 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+        <img alt="Instagram" class="w-full aspect-square object-cover" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAoD7vfr85lStm2DdCIWS2TkJB42_syC0BT_-pVnKqE8s4Q1U0l9LQpfl4ZSkMFDJ5gUiLJ_-9NDd-1NWER0uZ-OsYeovzBDSA6ADQqMNCH7JzYKN2dL2ZDl_qgMmiSNyarlds-36_DiNLbe9ZiH4E6BG4qlDaMltXHoVUaokeygf-csEwcPbxCED52c_eHB-BIIIKA_eJu7Ci7iE8a3apJVcMS1oe0cIKaOY-nFZvJrMiY_tHmRxOaeSwPpj-tgM1fshptdOaW3EI"/>
+        <img alt="Instagram" class="w-full aspect-square object-cover" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAPO_2lfuwQ10bA3V6FcZN1Z7DI5c-FVESsoI6HHUdhdYxPlWYNfAC-5MZOEYhf25EA0L9IMqlhFzsY6I_4_tvFV_fU72lTeFR-26sxEDjLdnhb1ut2qVwOxOqPEdV9Dkg1Z9GBp0d_lKdqKkNh3czFiQwdHZuHNAkcpng9ZEMd0bLdOcGiOc00QNDVd-1db9Dx9M8s7NZHyNz20wnbXfNl_PQTqNvfiqMDPCP8R_LVH_rViC1-mUMm_LhVdjjEG3S_5qQFPSm7yt_"/>
+        <img alt="Instagram" class="w-full aspect-square object-cover" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgVJ6xdMKY76yPaZv9Sr8HbGKEvyuD0zpcbNxyEaZjnqEFAyuq7NH-ca4lsLWKKri7eU7ebTPvlT27cM6IWuJ4wwO_vyc5hpUZlB201asvXOH_DnkDE0SM92mKAn_t0AXNGMc_oxv0ysK4iI0luOJCzDOSOG3kYcm3pQ1dCic_YmaN5FF_IlaEVVebdI2c0cSFsB6OQzOYOo0MoXHl4V2VTyBp93aQj-MyStcOitr_QK8_JHFcZrBtxd9ZgOU5IhfFkgzZiwKAk3c2"/>
+        <img alt="Instagram" class="w-full aspect-square object-cover" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZWghJvmF1NFFIkUqgKzBOL9Lsg5gG0M27g-80DtB1WqwYk1_UxexTIkMKas6enpZ6xLFL9ryA29GzgCVe1VCwkt3f6RsKlSBmPg9rWOS_eXl_3wZfb8qv9S4ndP-_WwwtYRzVppDvmTKdOJvQPrI9jVcHMUB8mgJUWnhvfeN93DDatdPvpyBV-LqMTa4_c3hNPHQdpa746MbtFDNeE7nP3joi1h4QB7L6yvv6n-hTcubhKZ0Hx1KxH41uo4397O59kKc9qgBCvtHU"/>
       </div>
       <!-- Bottom Bar -->
-      <div class="mt-16 pt-8 border-t border-sand-medium flex flex-col md:flex-row justify-between items-center text-[0.6rem] text-gray-400 tracking-widest uppercase">
+      <div class="mt-12 sm:mt-16 pt-8 border-t border-sand-medium flex flex-col md:flex-row justify-between items-center gap-4 text-[0.6rem] text-gray-400 tracking-widest uppercase">
         <p>&copy; 2026 Derly. Todos los derechos reservados.</p>
-        <div class="flex gap-6 mt-4 md:mt-0">
-          <a class="hover:text-charcoal" href="#">Política de Privacidad</a>
-          <a class="hover:text-charcoal" href="#">Términos de Servicio</a>
+        <div class="flex gap-6">
+          <a class="hover:text-charcoal transition-colors" href="#">Política de Privacidad</a>
+          <a class="hover:text-charcoal transition-colors" href="#">Términos de Servicio</a>
         </div>
       </div>
     </div>
   </footer>
   <!-- END: Footer -->
+
+  <!-- Mobile Menu Toggle Script -->
+  <script>
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const iconOpen = document.getElementById('menu-icon-open');
+    const iconClose = document.getElementById('menu-icon-close');
+
+    menuToggle.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      iconOpen.classList.toggle('hidden', isOpen);
+      iconClose.classList.toggle('hidden', !isOpen);
+      menuToggle.setAttribute('aria-expanded', isOpen);
+    });
+
+    // Close mobile menu when clicking a link
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
 
 </body>
 </html>
