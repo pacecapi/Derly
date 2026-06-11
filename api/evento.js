@@ -9,9 +9,9 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-export default async function handler(request) {
-  if (request.method !== 'GET') {
-    return json({ error: 'Método no permitido' }, 405);
+export default async function handler(req, res) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Método no permitido' });
   }
 
   const { data: evento, error } = await supabase
@@ -23,12 +23,12 @@ export default async function handler(request) {
     .maybeSingle();
 
   if (error || !evento) {
-    return json({ error: 'No hay ningún evento activo.' }, 404);
+    return res.status(404).json({ error: 'No hay ningún evento activo.' });
   }
 
   const plazas_disponibles = Math.max(0, evento.aforo_total - evento.plazas_ocupadas);
 
-  return json({
+  return res.status(200).json({
     slug: evento.slug,
     nombre: evento.nombre,
     descripcion: evento.descripcion,
@@ -38,12 +38,5 @@ export default async function handler(request) {
     moneda: evento.moneda,
     plazas_disponibles,
     agotado: plazas_disponibles <= 0,
-  });
-}
-
-function json(body, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'content-type': 'application/json' },
   });
 }

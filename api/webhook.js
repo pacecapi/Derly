@@ -3,12 +3,19 @@
 // registra la reserva de forma atómica e idempotente (descontando una plaza)
 // y envía el email de confirmación.
 //
-// IMPORTANTE: usa el cuerpo CRUDO de la petición (request.text()) para que
-// la verificación de la firma de Stripe funcione.
+// IMPORTANTE: desactivamos el parseo automático del body (bodyParser:false)
+// y leemos el cuerpo CRUDO para que la verificación de la firma de Stripe
+// funcione correctamente.
 
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const supabase = createClient(
@@ -17,13 +24,13 @@ const supabase = createClient(
 );
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export default async function handler(request) {
-  if (request.method !== 'POST') {
-    return new Response('Método no permitido', { status: 405 });
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).send('Método no permitido');
   }
 
-  const firma = request.headers.get('stripe-signature');
-  const cuerpo = await request.text();
+  const firma = req.headers['stripe-signature'];
+  const cuerpo = await leerCuerpoCrudo(req);
 
   let event;
   try {
@@ -34,7 +41,7 @@ export default async function handler(request) {
     );
   } catch (e) {
     console.error('Firma de webhook inválida:', e.message);
-    return new Response(`Webhook Error: ${e.message}`, { status: 400 });
+    return res.status(400).send(`Webhook Error: ${e.message}`);
   }
 
   if (event.type === 'checkout.session.completed') {
@@ -56,7 +63,7 @@ export default async function handler(request) {
       if (error) {
         console.error('Error registrando la reserva:', error);
         // 500 → Stripe reintentará el webhook más tarde.
-        return new Response('Error al registrar la reserva', { status: 500 });
+        return res.status(500).send('Error al registrar la reserva');
       }
 
       if (esNueva) {
@@ -64,14 +71,20 @@ export default async function handler(request) {
       }
     } catch (e) {
       console.error('Error procesando el webhook:', e);
-      return new Response('Error interno', { status: 500 });
+      return res.status(500).send('Error interno');
     }
   }
 
-  return new Response(JSON.stringify({ received: true }), {
-    status: 200,
-    headers: { 'content-type': 'application/json' },
-  });
+  return res.status(200).json({ received: true });
+}
+
+// Lee el cuerpo crudo de la petición (necesario para verificar la firma).
+async function leerCuerpoCrudo(req) {
+  const chunks = [];
+  for await (const chunk of req) {
+    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+  }
+  return Buffer.concat(chunks);
 }
 
 async function enviarEmailConfirmacion(session, md) {

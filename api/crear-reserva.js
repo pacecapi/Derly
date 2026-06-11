@@ -14,16 +14,16 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-export default async function handler(request) {
-  if (request.method !== 'POST') {
-    return json({ error: 'Método no permitido' }, 405);
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Método no permitido' });
   }
 
   let datos;
   try {
-    datos = await request.json();
+    datos = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
   } catch {
-    return json({ error: 'Petición inválida.' }, 400);
+    return res.status(400).json({ error: 'Petición inválida.' });
   }
 
   const nombre = (datos.nombre || '').trim();
@@ -31,7 +31,7 @@ export default async function handler(request) {
   const telefono = (datos.telefono || '').trim();
 
   if (!nombre || !email) {
-    return json({ error: 'Nombre y email son obligatorios.' }, 400);
+    return res.status(400).json({ error: 'Nombre y email son obligatorios.' });
   }
 
   // Leer el evento activo desde la base de datos.
@@ -44,15 +44,15 @@ export default async function handler(request) {
     .maybeSingle();
 
   if (error || !evento) {
-    return json({ error: 'No hay ningún evento disponible.' }, 404);
+    return res.status(404).json({ error: 'No hay ningún evento disponible.' });
   }
 
   // Comprobación de aforo (suave; la confirmación real ocurre en el webhook).
   if (evento.plazas_ocupadas >= evento.aforo_total) {
-    return json({ error: 'Lo sentimos, las plazas están agotadas.' }, 409);
+    return res.status(409).json({ error: 'Lo sentimos, las plazas están agotadas.' });
   }
 
-  const origin = siteUrl(request);
+  const origin = siteUrl(req);
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -83,24 +83,17 @@ export default async function handler(request) {
       cancel_url: `${origin}/pago-cancelado.html`,
     });
 
-    return json({ url: session.url });
+    return res.status(200).json({ url: session.url });
   } catch (e) {
     console.error('Error creando la sesión de Stripe:', e);
-    return json({ error: 'No se pudo iniciar el pago. Inténtalo de nuevo.' }, 500);
+    return res.status(500).json({ error: 'No se pudo iniciar el pago. Inténtalo de nuevo.' });
   }
 }
 
-function siteUrl(request) {
+function siteUrl(req) {
   if (process.env.SITE_URL) return process.env.SITE_URL.replace(/\/$/, '');
-  const origin = request.headers.get('origin');
+  const origin = req.headers.origin;
   if (origin) return origin.replace(/\/$/, '');
-  const host = request.headers.get('host');
+  const host = req.headers.host;
   return host ? `https://${host}` : '';
-}
-
-function json(body, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'content-type': 'application/json' },
-  });
 }
