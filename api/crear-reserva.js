@@ -69,9 +69,8 @@ export default async function handler(req, res) {
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      // Incluye automáticamente los métodos que tengas activados en Stripe
-      // (tarjeta, Bizum, Apple/Google Pay…).
-      automatic_payment_methods: { enabled: true },
+      // Checkout muestra automáticamente los métodos que tengas activados
+      // en tu panel de Stripe (tarjeta, Bizum, Apple/Google Pay…).
       customer_email: email,
       line_items: [
         {
