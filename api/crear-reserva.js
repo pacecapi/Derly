@@ -8,16 +8,28 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método no permitido' });
   }
+
+  // Verificar configuración antes de instanciar nada (para dar errores claros).
+  const faltan = [];
+  if (!process.env.STRIPE_SECRET_KEY) faltan.push('STRIPE_SECRET_KEY');
+  if (!process.env.SUPABASE_URL) faltan.push('SUPABASE_URL');
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) faltan.push('SUPABASE_SERVICE_ROLE_KEY');
+  if (faltan.length) {
+    console.error('Faltan variables de entorno:', faltan.join(', '));
+    return res.status(500).json({
+      error: 'El sistema de pago no está configurado todavía. (Faltan: ' + faltan.join(', ') + ')',
+    });
+  }
+
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
 
   let datos;
   try {
