@@ -69,6 +69,7 @@
       <div class="flex justify-between items-center h-16 sm:h-20">
         <!-- Desktop Menu Left -->
         <div class="hidden md:flex space-x-6 lg:space-x-8 uppercase-tracking font-medium">
+          <a class="hover:text-sand-dark transition-colors py-2" href="#evento">Evento</a>
           <a class="hover:text-sand-dark transition-colors py-2" href="#servicios">Servicios</a>
           <a class="hover:text-sand-dark transition-colors py-2" href="#herramientas">Herramientas</a>
         </div>
@@ -99,6 +100,7 @@
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="md:hidden border-t border-sand-medium bg-sand-light">
       <div class="px-4 py-4 space-y-1">
+        <a class="block py-3 px-2 uppercase-tracking font-medium hover:text-sand-dark transition-colors" href="#evento">Evento</a>
         <a class="block py-3 px-2 uppercase-tracking font-medium hover:text-sand-dark transition-colors" href="#servicios">Servicios</a>
         <a class="block py-3 px-2 uppercase-tracking font-medium hover:text-sand-dark transition-colors" href="#herramientas">Herramientas</a>
         <a class="block py-3 px-2 uppercase-tracking font-medium hover:text-sand-dark transition-colors" href="#retiros">Retiros</a>
@@ -201,6 +203,93 @@
     </div>
   </section>
   <!-- END: Retreat Spotlight -->
+
+  <!-- BEGIN: Event / Reservation -->
+  <section id="evento" class="py-16 sm:py-20 lg:py-24 bg-sand-light">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8 sm:mb-12">
+        <p class="uppercase-tracking text-sand-dark font-medium mb-2">Próximo encuentro</p>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif">RESERVA TU PLAZA</h2>
+      </div>
+
+      <div class="bg-white shadow-xl border border-sand-medium p-8 sm:p-10 md:p-12">
+        <!-- Estado de carga -->
+        <div id="evento-cargando" class="text-center text-gray-400 font-light py-8">
+          Cargando información del evento…
+        </div>
+
+        <!-- Sin evento / error -->
+        <div id="evento-error" class="hidden text-center text-gray-500 font-light py-8">
+          Por ahora no hay eventos abiertos. ¡Vuelve pronto!
+        </div>
+
+        <!-- Detalle del evento -->
+        <div id="evento-detalle" class="hidden text-center">
+          <h3 id="ev-nombre" class="text-2xl sm:text-3xl font-serif text-charcoal mb-3"></h3>
+          <p id="ev-descripcion" class="text-gray-600 font-light leading-relaxed mb-6 max-w-2xl mx-auto"></p>
+
+          <div class="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 mb-8 text-sm">
+            <div class="flex items-center justify-center gap-2 text-gray-600">
+              <span class="text-sand-dark">✦</span><span id="ev-fecha"></span>
+            </div>
+            <div class="flex items-center justify-center gap-2 text-gray-600">
+              <span class="text-sand-dark">✦</span><span id="ev-ubicacion"></span>
+            </div>
+          </div>
+
+          <div class="w-12 h-px bg-sand-dark mx-auto mb-6"></div>
+
+          <p class="mb-2"><span id="ev-precio" class="text-3xl font-serif text-charcoal"></span></p>
+          <p id="ev-plazas" class="uppercase-tracking text-sand-dark font-semibold mb-8"></p>
+
+          <button id="btn-reservar" class="inline-block px-10 sm:px-12 py-3.5 sm:py-4 bg-sand-dark text-white uppercase-tracking hover:bg-opacity-90 transition-all min-h-[44px]">
+            Reservar plaza
+          </button>
+          <p id="ev-agotado" class="hidden uppercase-tracking text-gray-400 font-semibold">Plazas agotadas</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- END: Event / Reservation -->
+
+  <!-- BEGIN: Reservation Modal -->
+  <div id="modal-reserva" class="hidden fixed inset-0 z-[60] items-center justify-center px-4 bg-charcoal/60 backdrop-blur-sm">
+    <div class="bg-sand-light w-full max-w-md shadow-2xl border border-sand-medium p-8 sm:p-10 relative">
+      <button id="modal-cerrar" class="absolute top-4 right-4 text-charcoal/60 hover:text-charcoal min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Cerrar">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
+        </svg>
+      </button>
+      <h3 class="text-2xl font-serif text-charcoal mb-1">Completa tu reserva</h3>
+      <p class="text-gray-500 font-light text-sm mb-6">Tras estos datos pasarás al pago seguro.</p>
+
+      <form id="form-reserva" class="space-y-4">
+        <div>
+          <label class="uppercase-tracking text-gray-500 block mb-1" for="r-nombre">Nombre completo</label>
+          <input id="r-nombre" name="nombre" type="text" required autocomplete="name"
+            class="w-full bg-white border border-sand-medium px-4 py-3 text-sm focus:ring-1 focus:ring-sand-dark focus:border-sand-dark min-h-[44px]"/>
+        </div>
+        <div>
+          <label class="uppercase-tracking text-gray-500 block mb-1" for="r-email">Email</label>
+          <input id="r-email" name="email" type="email" required autocomplete="email"
+            class="w-full bg-white border border-sand-medium px-4 py-3 text-sm focus:ring-1 focus:ring-sand-dark focus:border-sand-dark min-h-[44px]"/>
+        </div>
+        <div>
+          <label class="uppercase-tracking text-gray-500 block mb-1" for="r-telefono">Teléfono <span class="lowercase tracking-normal text-gray-400">(opcional)</span></label>
+          <input id="r-telefono" name="telefono" type="tel" autocomplete="tel"
+            class="w-full bg-white border border-sand-medium px-4 py-3 text-sm focus:ring-1 focus:ring-sand-dark focus:border-sand-dark min-h-[44px]"/>
+        </div>
+
+        <p id="form-error" class="hidden text-sm text-red-600"></p>
+
+        <button id="btn-pagar" type="submit" class="w-full px-8 py-3.5 bg-sand-dark text-white uppercase-tracking hover:bg-opacity-90 transition-all min-h-[44px] disabled:opacity-60">
+          Ir al pago seguro
+        </button>
+        <p class="text-center text-[0.65rem] text-gray-400 tracking-wide">Pago protegido con Stripe · Tarjeta y Bizum</p>
+      </form>
+    </div>
+  </div>
+  <!-- END: Reservation Modal -->
 
   <!-- BEGIN: Quote Section -->
   <section class="py-20 sm:py-24 lg:py-32 bg-charcoal text-white text-center">
@@ -427,6 +516,102 @@
         menuToggle.setAttribute('aria-expanded', 'false');
       });
     });
+  </script>
+
+  <!-- Event Reservation Script -->
+  <script>
+    (function () {
+      const cargando = document.getElementById('evento-cargando');
+      const errorBox = document.getElementById('evento-error');
+      const detalle = document.getElementById('evento-detalle');
+      const btnReservar = document.getElementById('btn-reservar');
+      const elAgotado = document.getElementById('ev-agotado');
+
+      const modal = document.getElementById('modal-reserva');
+      const modalCerrar = document.getElementById('modal-cerrar');
+      const form = document.getElementById('form-reserva');
+      const formError = document.getElementById('form-error');
+      const btnPagar = document.getElementById('btn-pagar');
+
+      // Cargar datos del evento y disponibilidad
+      fetch('/api/evento')
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(ev => {
+          cargando.classList.add('hidden');
+          detalle.classList.remove('hidden');
+
+          document.getElementById('ev-nombre').textContent = ev.nombre;
+          document.getElementById('ev-descripcion').textContent = ev.descripcion || '';
+          document.getElementById('ev-ubicacion').textContent = ev.ubicacion || '';
+
+          const fecha = new Date(ev.fecha).toLocaleDateString('es-ES', {
+            day: 'numeric', month: 'long', year: 'numeric'
+          });
+          document.getElementById('ev-fecha').textContent = fecha;
+
+          const precio = (ev.precio_centimos / 100).toLocaleString('es-ES', {
+            style: 'currency', currency: (ev.moneda || 'eur').toUpperCase()
+          });
+          document.getElementById('ev-precio').textContent = precio;
+
+          const plazas = document.getElementById('ev-plazas');
+          if (ev.agotado) {
+            plazas.textContent = 'Plazas agotadas';
+            btnReservar.classList.add('hidden');
+            elAgotado.classList.remove('hidden');
+          } else {
+            plazas.textContent = ev.plazas_disponibles + ' plazas disponibles';
+          }
+        })
+        .catch(() => {
+          cargando.classList.add('hidden');
+          errorBox.classList.remove('hidden');
+        });
+
+      // Abrir / cerrar modal
+      function abrirModal() {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+      function cerrarModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+      btnReservar && btnReservar.addEventListener('click', abrirModal);
+      modalCerrar.addEventListener('click', cerrarModal);
+      modal.addEventListener('click', e => { if (e.target === modal) cerrarModal(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
+
+      // Enviar formulario → crear reserva → redirigir a Stripe
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        formError.classList.add('hidden');
+        btnPagar.disabled = true;
+        btnPagar.textContent = 'Redirigiendo…';
+
+        try {
+          const res = await fetch('/api/crear-reserva', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+              nombre: document.getElementById('r-nombre').value,
+              email: document.getElementById('r-email').value,
+              telefono: document.getElementById('r-telefono').value,
+            }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'No se pudo iniciar el pago.');
+          window.location.href = data.url;
+        } catch (err) {
+          formError.textContent = err.message;
+          formError.classList.remove('hidden');
+          btnPagar.disabled = false;
+          btnPagar.textContent = 'Ir al pago seguro';
+        }
+      });
+    })();
   </script>
 
 </body>

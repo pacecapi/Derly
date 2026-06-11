@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Reserva confirmada | Derly</title>
+  <meta name="robots" content="noindex"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { 'sand-light': '#fdfaf5', 'sand-medium': '#f2e8de', 'sand-dark': '#D4A59A', 'charcoal': '#3D3D3D' },
+        fontFamily: { serif: ['"Playfair Display"', 'serif'], sans: ['Inter', 'sans-serif'] },
+      }}
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; color: #3D3D3D; }
+    h1 { font-family: 'Playfair Display', serif; }
+    .uppercase-tracking { text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.75rem; }
+  </style>
+</head>
+<body class="bg-sand-light min-h-screen flex items-center justify-center px-6">
+  <div class="max-w-lg text-center bg-white shadow-xl p-10 sm:p-14 border border-sand-medium">
+    <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-sand-dark/15 flex items-center justify-center">
+      <svg class="w-8 h-8 text-sand-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      </svg>
+    </div>
+    <h1 class="text-3xl sm:text-4xl font-serif text-charcoal mb-4">¡Tu plaza está reservada!</h1>
+    <p class="text-gray-600 font-light leading-relaxed mb-2">
+      Hemos recibido tu pago correctamente. En breve recibirás un correo de confirmación con todos los detalles del evento.
+    </p>
+    <p class="text-gray-400 text-sm mb-8">Revisa también tu carpeta de spam por si acaso.</p>
+    <a class="inline-block px-10 py-3.5 bg-sand-dark text-white uppercase-tracking hover:bg-opacity-90 transition-all" href="/">Volver al inicio</a>
+  </div>
+</body>
+</html>
