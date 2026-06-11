@@ -98,7 +98,10 @@ export default async function handler(req, res) {
     return res.status(200).json({ url: session.url });
   } catch (e) {
     console.error('Error creando la sesión de Stripe:', e);
-    return res.status(500).json({ error: 'No se pudo iniciar el pago. Inténtalo de nuevo.' });
+    return res.status(500).json({
+      error: 'No se pudo iniciar el pago. Inténtalo de nuevo.',
+      detalle: e?.message || String(e),
+    });
   }
 }
 
